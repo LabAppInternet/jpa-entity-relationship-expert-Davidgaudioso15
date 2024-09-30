@@ -4,6 +4,7 @@ import cat.tecnocampus.notes2425.application.dtos.CreateNoteDTO;
 import cat.tecnocampus.notes2425.application.dtos.NoteDTO;
 import cat.tecnocampus.notes2425.domain.Note;
 import cat.tecnocampus.notes2425.domain.Tag;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.jdbc.core.simple.JdbcClient;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -16,7 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Repository
-public class NoteRepository {
+public class NoteRepository  {
     private final JdbcClient jdbcClient;
 
     public NoteRepository(JdbcClient jdbcClient) {
@@ -42,14 +43,14 @@ public class NoteRepository {
         String query = "insert into note (owner_id, title, content, creation_date) values (?, ?, ?, ?)";
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcClient.sql(query)
-                .param(note.owner().id())
-                .param(note.title())
-                .param(note.content())
-                .param(note.creationDate())
+                .param(note.getOwner().getId())
+                .param(note.getTitle())
+                .param(note.getContent())
+                .param(note.getCreationDate())
                 .update(keyHolder);
 
         long noteId = keyHolder.getKey().longValue();
-        saveTagsIfExist(noteId, note.tags());
+        saveTagsIfExist(noteId, note.getTags());
         return noteId;
     }
 
